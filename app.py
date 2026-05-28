@@ -128,7 +128,7 @@ def render_backend_explainer(mode: str) -> None:
 
 
 def render_architecture_diagram(mode: str) -> None:
-    """Render a recruiter-friendly architecture flow diagram."""
+    """Render the pipeline architecture flow diagram."""
     st.markdown("### Architecture Flow")
     if mode == "Standard Claims":
         graph = """
