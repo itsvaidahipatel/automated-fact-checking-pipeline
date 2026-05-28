@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from config import Settings, get_settings
-
 from agents.base import build_code_agent
 from agents.prompts import FINAL_ANSWER_INSTRUCTIONS
+from config import Settings, get_settings
 
 CLAIM_INSTRUCTIONS = r"""
 You extract atomic, verifiable factual claims from provided text.

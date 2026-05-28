@@ -4,10 +4,9 @@ from __future__ import annotations
 
 from smolagents import DuckDuckGoSearchTool
 
-from config import Settings, get_settings
-
 from agents.base import build_code_agent
 from agents.prompts import FINAL_ANSWER_INSTRUCTIONS
+from config import Settings, get_settings
 
 RESEARCH_INSTRUCTIONS = r"""
 You fact-check individual claims using web search evidence.

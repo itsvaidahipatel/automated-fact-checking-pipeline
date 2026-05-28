@@ -6,13 +6,13 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
-from config import Settings, get_settings
-
 from agents.base import build_code_agent
 from agents.claim_agent import create_claim_agent
+from agents.grounding import apply_grounding, citations_from_payload_and_raw
 from agents.prompts import FINAL_ANSWER_INSTRUCTIONS
 from agents.social_extractor_agent import create_social_extractor_agent
 from agents.social_research_agent import create_social_research_agent
+from config import Settings, get_settings
 
 SOCIAL_MANAGER_INSTRUCTIONS = r"""
 You orchestrate a social-media fact-checking workflow.
@@ -36,7 +36,7 @@ class SocialFactCheckResult:
     confidence: float
     summary: str
     claims: list[dict[str, Any]]
-    citations: list[str]
+    citations: list[dict[str, str]]
     raw_output: str
 
     def to_dict(self) -> dict[str, Any]:
@@ -79,7 +79,7 @@ def _build_task(url: str | None, claim: str | None) -> str:
     return "\n".join(parts)
 
 
-def _parse_output(raw: str) -> SocialFactCheckResult:
+def _parse_output(raw: str, *, require_citations: bool = True) -> SocialFactCheckResult:
     default = SocialFactCheckResult(
         verdict="inconclusive",
         confidence=0.35,
@@ -92,14 +92,38 @@ def _parse_output(raw: str) -> SocialFactCheckResult:
         start = raw.find("{")
         end = raw.rfind("}") + 1
         if start == -1 or end <= start:
-            return default
+            citations = citations_from_payload_and_raw(None, raw, [])
+            verdict, confidence, summary = apply_grounding(
+                verdict=default.verdict,
+                confidence=default.confidence,
+                summary=default.summary,
+                citations=citations,
+                require_citations=require_citations,
+            )
+            return SocialFactCheckResult(
+                verdict=verdict,
+                confidence=confidence,
+                summary=summary,
+                claims=[],
+                citations=citations,
+                raw_output=raw,
+            )
         payload = json.loads(raw[start:end])
-        return SocialFactCheckResult(
+        claims = list(payload.get("claims", []))
+        citations = citations_from_payload_and_raw(payload, raw, claims)
+        verdict, confidence, summary = apply_grounding(
             verdict=str(payload.get("verdict", "inconclusive")),
             confidence=float(payload.get("confidence", 0.35)),
             summary=str(payload.get("summary", "")),
-            claims=list(payload.get("claims", [])),
-            citations=list(payload.get("citations", [])),
+            citations=citations,
+            require_citations=require_citations,
+        )
+        return SocialFactCheckResult(
+            verdict=verdict,
+            confidence=confidence,
+            summary=summary,
+            claims=claims,
+            citations=citations,
             raw_output=raw,
         )
     except Exception:
@@ -115,5 +139,6 @@ def run_social_fact_check(
     task = _build_task(url, claim)
     manager = create_social_manager_agent(settings)
     raw = manager.run(task)
-    return _parse_output(str(raw))
+    cfg = settings or get_settings()
+    return _parse_output(str(raw), require_citations=cfg.require_citations)
 

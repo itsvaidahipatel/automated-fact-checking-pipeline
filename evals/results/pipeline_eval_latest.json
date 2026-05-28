@@ -1,0 +1,14 @@
+{
+  "metadata": {
+    "timestamp_utc": null,
+    "model_id": "Qwen/Qwen2.5-3B-Instruct",
+    "vllm_base_url": "configured via VLLM_BASE_URL",
+    "fixture": "evals/fixtures/labeled_claims.json",
+    "total_samples": 52,
+    "note": "Run python evals/run_pipeline_eval.py on a vLLM host to populate metrics."
+  },
+  "metrics": null,
+  "ragas": null,
+  "failures": [],
+  "records": []
+}

@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from config import Settings, get_settings
-
 from agents.base import build_code_agent
 from agents.prompts import FINAL_ANSWER_INSTRUCTIONS
+from config import Settings, get_settings
 from tools.trusted_search import trusted_web_search
 
 SOCIAL_RESEARCH_INSTRUCTIONS = r"""

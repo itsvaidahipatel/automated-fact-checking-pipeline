@@ -20,6 +20,7 @@ class Settings:
     langfuse_secret_key: str | None = None
     langfuse_host: str = "https://cloud.langfuse.com"
     enable_telemetry: bool = True
+    require_citations: bool = True
 
 
 @lru_cache(maxsize=1)
@@ -35,4 +36,5 @@ def get_settings() -> Settings:
         langfuse_secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
         langfuse_host=os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com"),
         enable_telemetry=os.getenv("ENABLE_TELEMETRY", "true").lower() in {"1", "true", "yes"},
+        require_citations=os.getenv("REQUIRE_CITATIONS", "true").lower() in {"1", "true", "yes"},
     )

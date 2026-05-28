@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from config import Settings, get_settings
-from tools.scraper import scrape_url_text
-
 from agents.base import build_code_agent
 from agents.prompts import FINAL_ANSWER_INSTRUCTIONS
+from config import Settings, get_settings
+from tools.scraper import scrape_url_text
 
 EXTRACTOR_INSTRUCTIONS = r"""
 You extract webpage text for fact-checking.

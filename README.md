@@ -1,8 +1,28 @@
 # Automated Fact-Checking Agentic Pipeline
 
+[![CI](https://github.com/itsvaidahipatel/automated-fact-checking-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/itsvaidahipatel/automated-fact-checking-pipeline/actions/workflows/ci.yml)
+
 Multi-agent system that verifies claims and social-media URLs against web evidence, returning a structured verdict with confidence scores and citations. Orchestration runs on a lightweight host; LLM inference is served separately via vLLM (OpenAI-compatible API).
 
 **Author:** [Vaidahi Patel](https://github.com/itsvaidahipatel)
+
+**Documentation:** [Architecture](docs/ARCHITECTURE.md) · [Evaluation](docs/EVAL.md) · [Resume blocks](docs/RESUME.md)
+
+---
+
+## Results
+
+| Metric | Value |
+|--------|-------|
+| Labeled eval set | 52 claims ([fixture](evals/fixtures/labeled_claims.json)) |
+| End-to-end accuracy | Run eval on vLLM host — see [docs/EVAL.md](docs/EVAL.md) |
+| Latest report | [evals/results/pipeline_eval_latest.json](evals/results/pipeline_eval_latest.json) |
+
+After a GPU eval run, commit `pipeline_eval_latest.json` and update the accuracy row with `metrics.accuracy` from that file.
+
+```bash
+python evals/run_pipeline_eval.py --ragas-subset 15 --output evals/results/pipeline_eval_latest.json
+```
 
 ---
 
@@ -10,15 +30,15 @@ Multi-agent system that verifies claims and social-media URLs against web eviden
 
 | | |
 |---|---|
-| **Live UI** | `streamlit run app.py` (requires API on port 8080) |
+| **Live UI** | `streamlit run app.py` (API on port 8080) |
 | **API** | OpenAPI at `http://localhost:8080/docs` |
-| **Walkthrough** | _Demo video link — add when available_ |
+| **Video walkthrough** | Add your Loom/YouTube URL here after recording |
 
 ---
 
 ## Architecture
 
-Orchestration (FastAPI + smolagents) is decoupled from GPU inference (vLLM). All agents call a single OpenAI-compatible endpoint; no managed cloud LLM API is required.
+Orchestration (FastAPI + smolagents) is decoupled from GPU inference (vLLM). Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ```mermaid
 flowchart TB
@@ -75,19 +95,20 @@ flowchart TB
 | Endpoint | Description |
 |----------|-------------|
 | `POST /fact-check` | Claim verification with optional article URL |
-| `POST /fact-check-social` | Social URLs (X, YouTube, web) with domain-prioritized search |
+| `POST /fact-check-social` | Social URLs with domain-prioritized search |
+
+Both return `verdict`, `confidence`, `summary`, and structured `citations`. Unsafe requests return `status: refused`.
 
 ---
 
 ## Design
 
-1. **Hierarchical agents** — Manager `CodeAgent` routes work to extractor, claim, and research sub-agents (smolagents).
-2. **Layered responsibilities** — FastAPI for HTTP; agents for reasoning; tools for scrape/search; vLLM for inference.
-3. **Cost-efficient serving** — One vLLM instance (PagedAttention) backs all agent calls through a shared base URL.
-4. **Tooling** — Custom three-argument `final_answer`, DuckDuckGo research, social extraction (`yt-dlp`, nitter fallback, BeautifulSoup).
-5. **Observability** — Optional Langfuse tracing via `SmolagentsInstrumentor`.
-6. **MLOps hooks** — Evaluation fixtures in `evals/`; Unsloth QLoRA script for claim-extraction fine-tuning.
-7. **UI** — Streamlit front-end with pipeline visualization and session run history.
+1. **Hierarchical agents** — Manager routes to extractor, claim, and research sub-agents.
+2. **Citation grounding** — Verdicts without URLs are downgraded when `REQUIRE_CITATIONS=true`.
+3. **Safety refusals** — Prompt-injection and medical-diagnosis patterns blocked before agent runs.
+4. **Cost-efficient serving** — Single vLLM instance backs all agent calls.
+5. **Evaluation** — 52-claim labeled set, pipeline eval script, optional Ragas subset.
+6. **Engineering** — Docker Compose (API + UI), GitHub Actions CI, pytest.
 
 ---
 
@@ -102,25 +123,7 @@ flowchart TB
 | Search | DuckDuckGo |
 | Scraping | BeautifulSoup, httpx, yt-dlp |
 | Observability | Langfuse, OpenTelemetry |
-| Fine-tuning | Unsloth QLoRA |
-| Evaluation | Custom scripts, Ragas (optional) |
-
----
-
-## Project structure
-
-```
-├── agents/           # Manager, extractor, claim, research, social variants
-├── tools/            # scraper, search, social_extractor, trusted_search
-├── telemetry/        # Langfuse / OTEL setup
-├── serve/            # FastAPI + vLLM deployment notes
-├── finetuning/       # Unsloth QLoRA
-├── evals/            # Accuracy / hallucination evaluation
-├── app.py            # Streamlit UI
-├── config.py
-├── requirements.txt
-└── README.md
-```
+| Evaluation | Ragas, custom pipeline eval |
 
 ---
 
@@ -137,31 +140,30 @@ python -m pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Set `VLLM_BASE_URL` in `.env` to your inference server. Do not commit `.env`.
+Set `VLLM_BASE_URL` in `.env`. Do not commit `.env`.
 
-### Run vLLM (GPU host)
-
-See [serve/vllm_config.md](serve/vllm_config.md).
+### Docker (API + UI, external vLLM)
 
 ```bash
-vllm serve Qwen/Qwen2.5-3B-Instruct --host 0.0.0.0 --port 8000
+docker compose up --build
 ```
 
-### Run API
+vLLM runs on a separate GPU machine; set `VLLM_BASE_URL` to reach it from the API container.
+
+### Run locally
 
 ```bash
+# GPU host
+vllm serve Qwen/Qwen2.5-3B-Instruct --host 0.0.0.0 --port 8000
+
+# Orchestration host
 export PYTHONPATH=.
 set -a && source .env && set +a
 uvicorn serve.api:app --reload --host 0.0.0.0 --port 8080
-```
-
-### Run UI
-
-```bash
 streamlit run app.py
 ```
 
-### Example request
+### Example response
 
 ```bash
 curl -X POST http://localhost:8080/fact-check \
@@ -172,9 +174,12 @@ curl -X POST http://localhost:8080/fact-check \
 ```json
 {
   "status": "success",
-  "verdict": "false",
-  "confidence": 0.65,
-  "summary": "..."
+  "verdict": "true",
+  "confidence": 0.72,
+  "summary": "...",
+  "citations": [
+    {"url": "https://example.com/source", "snippet": "", "source_title": ""}
+  ]
 }
 ```
 
@@ -186,8 +191,19 @@ curl -X POST http://localhost:8080/fact-check \
 |----------|-------------|
 | `VLLM_BASE_URL` | OpenAI-compatible vLLM URL |
 | `VLLM_MODEL_ID` | Model ID served by vLLM |
-| `ENABLE_TELEMETRY` | Enable Langfuse (`true` / `false`) |
+| `REQUIRE_CITATIONS` | Downgrade verdicts without evidence URLs |
+| `ENABLE_TELEMETRY` | Langfuse tracing (`true` / `false`) |
 | `LANGFUSE_*` | Langfuse credentials (optional) |
+
+---
+
+## Development
+
+```bash
+pip install -r requirements-dev.txt
+ruff check agents tools serve tests
+pytest -q
+```
 
 ---
 

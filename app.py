@@ -232,6 +232,10 @@ def render_confidence_signal(confidence: Any) -> None:
 
 def render_result(data: dict[str, Any]) -> None:
     """Render API output with polished UI blocks."""
+    if data.get("status") == "refused":
+        st.warning(data.get("refusal_reason") or data.get("message", "Request refused"))
+        return
+
     if data.get("status") == "error":
         st.error(data.get("message", "Pipeline failed"))
         return
@@ -271,8 +275,17 @@ def render_result(data: dict[str, Any]) -> None:
 
     if citations:
         st.markdown("#### Citations")
-        for idx, url in enumerate(citations, start=1):
-            st.markdown(f"{idx}. [{url}]({url})")
+        for idx, item in enumerate(citations, start=1):
+            if isinstance(item, dict):
+                url = item.get("url", "")
+                snippet = item.get("snippet", "")
+                title = item.get("source_title", "")
+                label = title or url
+                st.markdown(f"{idx}. [{label}]({url})")
+                if snippet:
+                    st.caption(snippet[:300])
+            else:
+                st.markdown(f"{idx}. [{item}]({item})")
 
     with st.expander("View raw API response"):
         st.json(data)

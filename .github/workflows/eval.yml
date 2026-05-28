@@ -1,0 +1,46 @@
+name: Pipeline Eval
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Max samples (empty = full fixture)"
+        required: false
+      ragas_subset:
+        description: "Ragas subset size (0 = skip)"
+        required: false
+        default: "15"
+
+jobs:
+  pipeline-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pipeline evaluation
+        env:
+          VLLM_BASE_URL: ${{ secrets.VLLM_BASE_URL }}
+          VLLM_API_KEY: ${{ secrets.VLLM_API_KEY }}
+          VLLM_MODEL_ID: ${{ secrets.VLLM_MODEL_ID }}
+          ENABLE_TELEMETRY: "false"
+          PYTHONPATH: .
+        run: |
+          LIMIT_FLAG=""
+          if [ -n "${{ github.event.inputs.limit }}" ]; then
+            LIMIT_FLAG="--limit ${{ github.event.inputs.limit }}"
+          fi
+          python evals/run_pipeline_eval.py $LIMIT_FLAG \
+            --ragas-subset "${{ github.event.inputs.ragas_subset }}" \
+            --output evals/results/pipeline_eval_latest.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-eval-results
+          path: evals/results/pipeline_eval_latest.json

@@ -4,17 +4,16 @@ from __future__ import annotations
 
 import json
 import logging
-import re
 from dataclasses import dataclass
 from typing import Any
-
-from config import Settings, get_settings
 
 from agents.base import build_code_agent
 from agents.claim_agent import create_claim_agent
 from agents.extractor_agent import create_extractor_agent
+from agents.grounding import apply_grounding, citations_from_payload_and_raw
 from agents.prompts import FINAL_ANSWER_INSTRUCTIONS
 from agents.research_agent import create_research_agent
+from config import Settings, get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +50,7 @@ class FactCheckResult:
     confidence: float
     summary: str
     claims: list[dict[str, Any]]
+    citations: list[dict[str, str]]
     raw_output: str
 
     def to_dict(self) -> dict[str, Any]:
@@ -59,6 +59,7 @@ class FactCheckResult:
             "confidence": self.confidence,
             "summary": self.summary,
             "claims": self.claims,
+            "citations": self.citations,
             "raw_output": self.raw_output,
         }
 
@@ -93,7 +94,7 @@ def _build_task(url: str | None, claim: str | None) -> str:
     return "\n".join(parts)
 
 
-def _parse_agent_output(raw: str) -> FactCheckResult:
+def parse_agent_output(raw: str, *, require_citations: bool = True) -> FactCheckResult:
     """Best-effort parse of manager output; falls back to safe defaults.
 
     The manager is instructed to return JSON, but it may also return the
@@ -104,8 +105,29 @@ def _parse_agent_output(raw: str) -> FactCheckResult:
         confidence=0.0,
         summary=raw[:500] if raw else "No output produced.",
         claims=[],
+        citations=[],
         raw_output=raw,
     )
+
+    def _finalize(payload: dict[str, Any] | None, **kwargs: Any) -> FactCheckResult:
+        citations = citations_from_payload_and_raw(
+            payload, raw, kwargs.get("claims") or []
+        )
+        verdict, confidence, summary = apply_grounding(
+            verdict=str(kwargs.get("verdict", "inconclusive")),
+            confidence=float(kwargs.get("confidence", 0.0)),
+            summary=str(kwargs.get("summary", "")),
+            citations=citations,
+            require_citations=require_citations,
+        )
+        return FactCheckResult(
+            verdict=verdict,
+            confidence=confidence,
+            summary=summary,
+            claims=list(kwargs.get("claims") or []),
+            citations=citations,
+            raw_output=raw,
+        )
 
     def _infer_verdict(text: str) -> str:
         t = text.lower()
@@ -164,12 +186,12 @@ def _parse_agent_output(raw: str) -> FactCheckResult:
             try:
                 if detailed.startswith("{") and detailed.endswith("}"):
                     payload = json.loads(detailed)
-                    return FactCheckResult(
+                    return _finalize(
+                        payload,
                         verdict=str(payload.get("verdict", "inconclusive")),
                         confidence=float(payload.get("confidence", 0.0)),
                         summary=str(payload.get("summary", short)),
                         claims=list(payload.get("claims", [])),
-                        raw_output=raw,
                     )
             except Exception:
                 pass
@@ -180,20 +202,20 @@ def _parse_agent_output(raw: str) -> FactCheckResult:
             if ctx:
                 summary = summary + "\n\n" + ctx
 
-            return FactCheckResult(
+            return _finalize(
+                None,
                 verdict=verdict,
                 confidence=confidence,
                 summary=summary,
                 claims=[],
-                raw_output=raw,
             )
         payload = json.loads(raw[start:end])
-        return FactCheckResult(
+        return _finalize(
+            payload,
             verdict=str(payload.get("verdict", "inconclusive")),
             confidence=float(payload.get("confidence", 0.0)),
             summary=str(payload.get("summary", "")),
             claims=list(payload.get("claims", [])),
-            raw_output=raw,
         )
     except (json.JSONDecodeError, TypeError, ValueError) as exc:
         logger.warning("Could not parse manager JSON output: %s", exc)
@@ -218,4 +240,9 @@ def run_fact_check(
     manager = create_manager_agent(settings)
     logger.info("Starting fact-check run (url=%s, claim=%s)", url, claim)
     raw = manager.run(task)
-    return _parse_agent_output(str(raw))
+    cfg = settings or get_settings()
+    return parse_agent_output(str(raw), require_citations=cfg.require_citations)
+
+
+# Backward-compatible alias for tests
+_parse_agent_output = parse_agent_output

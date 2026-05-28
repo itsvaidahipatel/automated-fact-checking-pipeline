@@ -12,22 +12,11 @@ import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
 
 from agents.research_agent import create_research_agent
+from evals.fixture_loader import DEFAULT_FIXTURE, LabeledClaim, load_labeled_claims
 
 logger = logging.getLogger(__name__)
-
-VerdictLabel = Literal["true", "false"]
-
-DEFAULT_FIXTURE = Path(__file__).parent / "fixtures" / "labeled_claims.json"
-
-
-@dataclass
-class LabeledClaim:
-    claim: str
-    label: VerdictLabel
-    category: str = "general"
 
 
 @dataclass
@@ -44,13 +33,6 @@ class EvalMetrics:
             "accuracy": self.accuracy,
             "failures": self.failures,
         }
-
-
-def load_labeled_claims(path: Path) -> list[LabeledClaim]:
-    """Load evaluation fixtures (JSON array)."""
-    with path.open(encoding="utf-8") as handle:
-        raw = json.load(handle)
-    return [LabeledClaim(**item) for item in raw]
 
 
 def _normalize_verdict(agent_output: str) -> str:

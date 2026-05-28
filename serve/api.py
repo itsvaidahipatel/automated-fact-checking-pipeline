@@ -4,20 +4,22 @@ from __future__ import annotations
 
 import logging
 from contextlib import asynccontextmanager
-from typing import Any, AsyncIterator
+from typing import AsyncIterator
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field, model_validator
 
 from agents.manager_agent import run_fact_check
 from agents.social_manager_agent import run_social_fact_check
+from serve.safety import check_fact_check_request
+from serve.schemas import Citation, FactCheckResponse, HealthResponse, RootResponse
 from telemetry.langfuse_setup import init_langfuse_telemetry, shutdown_telemetry
 
 logger = logging.getLogger(__name__)
 
 
 class FactCheckRequest(BaseModel):
-    """Inbound payload for the /fact-check endpoint."""
+    """Inbound payload for fact-check endpoints."""
 
     url: str | None = Field(
         default=None,
@@ -37,16 +39,24 @@ class FactCheckRequest(BaseModel):
         return self
 
 
-class HealthResponse(BaseModel):
-    status: str
-    telemetry_enabled: bool
+def _to_citation_models(citations: list[dict[str, str]]) -> list[Citation]:
+    return [
+        Citation(
+            url=c["url"],
+            snippet=c.get("snippet", ""),
+            source_title=c.get("source_title", ""),
+        )
+        for c in citations
+        if c.get("url")
+    ]
 
 
-class RootResponse(BaseModel):
-    service: str
-    version: str
-    docs: str
-    endpoints: dict[str, str]
+def _refused(reason: str) -> FactCheckResponse:
+    return FactCheckResponse(
+        status="refused",
+        message=reason,
+        refusal_reason=reason,
+    )
 
 
 @asynccontextmanager
@@ -65,7 +75,7 @@ def create_app() -> FastAPI:
     application = FastAPI(
         title="Enterprise Fact-Checking API",
         description="Multi-agent automated fact-checking powered by smolagents + vLLM.",
-        version="0.1.0",
+        version="0.2.0",
         lifespan=lifespan,
     )
 
@@ -73,7 +83,7 @@ def create_app() -> FastAPI:
     async def root() -> RootResponse:
         return RootResponse(
             service="Enterprise Fact-Checking API",
-            version="0.1.0",
+            version="0.2.0",
             docs="/docs",
             endpoints={
                 "health": "GET /health",
@@ -89,37 +99,45 @@ def create_app() -> FastAPI:
             telemetry_enabled=getattr(application.state, "telemetry_enabled", False),
         )
 
-    @application.post("/fact-check")
-    async def fact_check(body: FactCheckRequest) -> dict[str, Any]:
+    @application.post("/fact-check", response_model=FactCheckResponse)
+    async def fact_check(body: FactCheckRequest) -> FactCheckResponse:
+        safety = check_fact_check_request(body.claim, body.url)
+        if not safety.allowed:
+            return _refused(safety.reason or "Request refused.")
+
         try:
             result = run_fact_check(url=body.url, claim=body.claim)
         except Exception as exc:
             logger.exception("Fact-check pipeline failed")
-            return {"status": "error", "message": str(exc)}
+            return FactCheckResponse(status="error", message=str(exc))
 
-        # Return a clean, stable response shape for the UI.
-        return {
-            "status": "success",
-            "verdict": result.verdict,
-            "confidence": result.confidence,
-            "summary": result.summary,
-        }
+        return FactCheckResponse(
+            status="success",
+            verdict=result.verdict,
+            confidence=result.confidence,
+            summary=result.summary,
+            citations=_to_citation_models(result.citations),
+        )
 
-    @application.post("/fact-check-social")
-    async def fact_check_social(body: FactCheckRequest) -> dict[str, Any]:
+    @application.post("/fact-check-social", response_model=FactCheckResponse)
+    async def fact_check_social(body: FactCheckRequest) -> FactCheckResponse:
+        safety = check_fact_check_request(body.claim, body.url)
+        if not safety.allowed:
+            return _refused(safety.reason or "Request refused.")
+
         try:
             result = run_social_fact_check(url=body.url, claim=body.claim)
         except Exception as exc:
             logger.exception("Social fact-check pipeline failed")
-            return {"status": "error", "message": str(exc)}
+            return FactCheckResponse(status="error", message=str(exc))
 
-        return {
-            "status": "success",
-            "verdict": result.verdict,
-            "confidence": result.confidence,
-            "summary": result.summary,
-            "citations": result.citations,
-        }
+        return FactCheckResponse(
+            status="success",
+            verdict=result.verdict,
+            confidence=result.confidence,
+            summary=result.summary,
+            citations=_to_citation_models(result.citations),
+        )
 
     return application
 
