@@ -50,4 +50,4 @@ flowchart LR
 
 ## Cost model
 
-Use short GPU bursts for demos and evaluation (start instance → run vLLM → execute jobs → stop). Portfolio visitors rely on committed eval JSON and a demo video, not a 24/7 GPU.
+Use short GPU bursts for demos and evaluation (start instance → run vLLM → execute jobs → stop). Committed eval JSON and documentation describe quality without always-on inference hosting.

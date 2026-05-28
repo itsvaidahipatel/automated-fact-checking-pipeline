@@ -292,14 +292,21 @@ def render_result(data: dict[str, Any]) -> None:
 
 
 def main() -> None:
-    st.set_page_config(page_title="Enterprise Fact Checker", page_icon="✅", layout="wide")
+    st.set_page_config(
+        page_title="Fact-Checking Pipeline | Vaidahi Patel",
+        page_icon="✅",
+        layout="wide",
+    )
 
-    st.title("Enterprise Multi-Agent Fact Checker")
-    st.caption("FastAPI + Smolagents + vLLM + Streamlit")
+    st.title("Automated Fact-Checking Pipeline")
+    st.caption("By Vaidahi Patel · FastAPI · smolagents · vLLM")
 
     _init_history()
 
     with st.sidebar:
+        st.markdown("**Vaidahi Patel**")
+        st.markdown("[GitHub](https://github.com/itsvaidahipatel)")
+        st.markdown("---")
         st.header("Verification Mode")
         mode = st.radio("Choose pipeline", ["Standard Claims", "Social Media"], index=0)
         st.markdown("---")

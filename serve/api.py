@@ -73,8 +73,8 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 def create_app() -> FastAPI:
     """Application factory for tests and ASGI servers."""
     application = FastAPI(
-        title="Enterprise Fact-Checking API",
-        description="Multi-agent automated fact-checking powered by smolagents + vLLM.",
+        title="Fact-Checking API",
+        description="Multi-agent fact-checking by Vaidahi Patel — smolagents + vLLM.",
         version="0.2.0",
         lifespan=lifespan,
     )
@@ -82,7 +82,7 @@ def create_app() -> FastAPI:
     @application.get("/", response_model=RootResponse)
     async def root() -> RootResponse:
         return RootResponse(
-            service="Enterprise Fact-Checking API",
+            service="Fact-Checking API",
             version="0.2.0",
             docs="/docs",
             endpoints={

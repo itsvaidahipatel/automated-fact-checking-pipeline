@@ -2,11 +2,25 @@
 
 [![CI](https://github.com/itsvaidahipatel/automated-fact-checking-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/itsvaidahipatel/automated-fact-checking-pipeline/actions/workflows/ci.yml)
 
-Multi-agent system that verifies claims and social-media URLs against web evidence, returning a structured verdict with confidence scores and citations. Orchestration runs on a lightweight host; LLM inference is served separately via vLLM (OpenAI-compatible API).
+**Vaidahi Patel** · [GitHub](https://github.com/itsvaidahipatel)
 
-**Author:** [Vaidahi Patel](https://github.com/itsvaidahipatel)
+A multi-agent system that verifies claims and social-media URLs against web evidence. It returns a structured verdict, confidence score, and source citations. Orchestration runs on a standard host; inference is served through vLLM (OpenAI-compatible API).
 
-**Documentation:** [Architecture](docs/ARCHITECTURE.md) · [Evaluation](docs/EVAL.md) · [Resume blocks](docs/RESUME.md)
+| | |
+|---|---|
+| **Architecture** | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| **Evaluation** | [docs/EVAL.md](docs/EVAL.md) |
+| **Summary** | [docs/PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md) |
+
+---
+
+## Highlights
+
+- Hierarchical agents (extract → claim → research) via [smolagents](https://huggingface.co/docs/smolagents)
+- Decoupled GPU inference (vLLM) from FastAPI orchestration
+- Citation grounding and request safety checks on the API layer
+- 52-claim labeled evaluation harness with optional Ragas metrics
+- Docker Compose, GitHub Actions CI, and pytest
 
 ---
 
@@ -14,15 +28,18 @@ Multi-agent system that verifies claims and social-media URLs against web eviden
 
 | Metric | Value |
 |--------|-------|
-| Labeled eval set | 52 claims ([fixture](evals/fixtures/labeled_claims.json)) |
-| End-to-end accuracy | Run eval on vLLM host — see [docs/EVAL.md](docs/EVAL.md) |
-| Latest report | [evals/results/pipeline_eval_latest.json](evals/results/pipeline_eval_latest.json) |
-
-After a GPU eval run, commit `pipeline_eval_latest.json` and update the accuracy row with `metrics.accuracy` from that file.
+| Eval dataset | 52 labeled claims ([fixture](evals/fixtures/labeled_claims.json)) |
+| End-to-end accuracy | See [latest report](evals/results/pipeline_eval_latest.json) |
+| Methodology | [docs/EVAL.md](docs/EVAL.md) |
 
 ```bash
-python evals/run_pipeline_eval.py --ragas-subset 15 --output evals/results/pipeline_eval_latest.json
+export PYTHONPATH=.
+set -a && source .env && set +a
+python evals/run_pipeline_eval.py --ragas-subset 15 \
+  --output evals/results/pipeline_eval_latest.json
 ```
+
+Requires a running vLLM instance (`VLLM_BASE_URL` in `.env`).
 
 ---
 
@@ -30,158 +47,71 @@ python evals/run_pipeline_eval.py --ragas-subset 15 --output evals/results/pipel
 
 | | |
 |---|---|
-| **Live UI** | `streamlit run app.py` (API on port 8080) |
-| **API** | OpenAPI at `http://localhost:8080/docs` |
-| **Video walkthrough** | Add your Loom/YouTube URL here after recording |
+| **UI** | `streamlit run app.py` (API on port 8080) |
+| **API** | `http://localhost:8080/docs` |
+| **Walkthrough** | _Video link — add when available_ |
 
 ---
 
 ## Architecture
 
-Orchestration (FastAPI + smolagents) is decoupled from GPU inference (vLLM). Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
 ```mermaid
 flowchart TB
-    subgraph Client["Client Layer"]
-        UI[Streamlit app.py]
-        Curl[curl / API clients]
+    subgraph Client["Client"]
+        UI[Streamlit]
+        API_Client[HTTP clients]
     end
 
     subgraph Orchestration["Orchestration"]
-        API[FastAPI serve/api.py]
-        Mgr[Manager CodeAgent]
-        Ext[Extractor Agent]
-        Clm[Claim Agent]
-        Res[Research Agent]
-        SocMgr[Social Manager]
-        SocExt[Social Extractor]
-        SocRes[Social Research]
+        API[FastAPI]
+        Mgr[Manager Agent]
+        Sub[Extractor / Claim / Research]
     end
 
     subgraph Tools["Tools"]
-        BS[BeautifulSoup scraper]
-        DDG[DuckDuckGo search]
-        YT[yt-dlp metadata]
+        Scrape[Scraper]
+        Search[DuckDuckGo]
     end
 
-    subgraph Inference["GPU inference"]
-        VLLM[(vLLM + Qwen2.5-3B)]
-    end
-
-    subgraph Observability["Observability"]
-        LF[Langfuse + OpenTelemetry]
+    subgraph Inference["Inference"]
+        VLLM[(vLLM)]
     end
 
     UI --> API
-    Curl --> API
-    API --> Mgr
-    API --> SocMgr
-    Mgr --> Ext --> BS
-    Mgr --> Clm
-    Mgr --> Res --> DDG
-    SocMgr --> SocExt --> YT
-    SocMgr --> Clm
-    SocMgr --> SocRes --> DDG
-    Mgr --> VLLM
-    Ext --> VLLM
-    Clm --> VLLM
-    Res --> VLLM
-    SocMgr --> VLLM
-    API -.-> LF
+    API_Client --> API
+    API --> Mgr --> Sub
+    Sub --> Tools
+    Sub --> VLLM
 ```
 
-### API endpoints
+Full design notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 | Endpoint | Description |
 |----------|-------------|
-| `POST /fact-check` | Claim verification with optional article URL |
-| `POST /fact-check-social` | Social URLs with domain-prioritized search |
+| `POST /fact-check` | Claims and optional article URLs |
+| `POST /fact-check-social` | Social URLs with prioritized domains |
 
-Both return `verdict`, `confidence`, `summary`, and structured `citations`. Unsafe requests return `status: refused`.
-
----
-
-## Design
-
-1. **Hierarchical agents** — Manager routes to extractor, claim, and research sub-agents.
-2. **Citation grounding** — Verdicts without URLs are downgraded when `REQUIRE_CITATIONS=true`.
-3. **Safety refusals** — Prompt-injection and medical-diagnosis patterns blocked before agent runs.
-4. **Cost-efficient serving** — Single vLLM instance backs all agent calls.
-5. **Evaluation** — 52-claim labeled set, pipeline eval script, optional Ragas subset.
-6. **Engineering** — Docker Compose (API + UI), GitHub Actions CI, pytest.
+Responses include `verdict`, `confidence`, `summary`, and `citations`. Policy violations return `status: refused`.
 
 ---
 
-## Tech stack
-
-| Layer | Technology |
-|-------|------------|
-| Orchestration | [smolagents](https://huggingface.co/docs/smolagents) |
-| Inference | [vLLM](https://docs.vllm.ai/) |
-| API | FastAPI, Uvicorn |
-| UI | Streamlit |
-| Search | DuckDuckGo |
-| Scraping | BeautifulSoup, httpx, yt-dlp |
-| Observability | Langfuse, OpenTelemetry |
-| Evaluation | Ragas, custom pipeline eval |
-
----
-
-## Setup
-
-### Install
+## Quick start
 
 ```bash
 git clone https://github.com/itsvaidahipatel/automated-fact-checking-pipeline.git
 cd automated-fact-checking-pipeline
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-cp .env.example .env
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env   # set VLLM_BASE_URL
 ```
 
-Set `VLLM_BASE_URL` in `.env`. Do not commit `.env`.
+**vLLM (GPU host):** `vllm serve Qwen/Qwen2.5-3B-Instruct --host 0.0.0.0 --port 8000`
 
-### Docker (API + UI, external vLLM)
+**API:** `export PYTHONPATH=. && uvicorn serve.api:app --reload --port 8080`
 
-```bash
-docker compose up --build
-```
+**UI:** `streamlit run app.py`
 
-vLLM runs on a separate GPU machine; set `VLLM_BASE_URL` to reach it from the API container.
-
-### Run locally
-
-```bash
-# GPU host
-vllm serve Qwen/Qwen2.5-3B-Instruct --host 0.0.0.0 --port 8000
-
-# Orchestration host
-export PYTHONPATH=.
-set -a && source .env && set +a
-uvicorn serve.api:app --reload --host 0.0.0.0 --port 8080
-streamlit run app.py
-```
-
-### Example response
-
-```bash
-curl -X POST http://localhost:8080/fact-check \
-  -H "Content-Type: application/json" \
-  -d '{"claim": "Water boils at 100°C at sea level."}'
-```
-
-```json
-{
-  "status": "success",
-  "verdict": "true",
-  "confidence": 0.72,
-  "summary": "...",
-  "citations": [
-    {"url": "https://example.com/source", "snippet": "", "source_title": ""}
-  ]
-}
-```
+**Docker:** `docker compose up --build` (vLLM remains external; see [serve/vllm_config.md](serve/vllm_config.md))
 
 ---
 
@@ -189,11 +119,10 @@ curl -X POST http://localhost:8080/fact-check \
 
 | Variable | Description |
 |----------|-------------|
-| `VLLM_BASE_URL` | OpenAI-compatible vLLM URL |
-| `VLLM_MODEL_ID` | Model ID served by vLLM |
+| `VLLM_BASE_URL` | OpenAI-compatible vLLM endpoint |
+| `VLLM_MODEL_ID` | Model served by vLLM |
 | `REQUIRE_CITATIONS` | Downgrade verdicts without evidence URLs |
-| `ENABLE_TELEMETRY` | Langfuse tracing (`true` / `false`) |
-| `LANGFUSE_*` | Langfuse credentials (optional) |
+| `ENABLE_TELEMETRY` | Langfuse tracing |
 
 ---
 
