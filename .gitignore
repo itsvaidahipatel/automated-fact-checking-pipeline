@@ -1,0 +1,38 @@
+# Secrets & local config
+.env
+.env.local
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# ML / eval outputs
+outputs/
+evals/results/
+*.pt
+*.bin
+*.safetensors
+
+# Logs
+*.log
+
+# Streamlit
+.streamlit/secrets.toml

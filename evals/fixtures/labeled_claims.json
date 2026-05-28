@@ -1,0 +1,27 @@
+[
+  {
+    "claim": "The Earth orbits the Sun.",
+    "label": "true",
+    "category": "science"
+  },
+  {
+    "claim": "Water boils at 50 degrees Celsius at sea level.",
+    "label": "false",
+    "category": "science"
+  },
+  {
+    "claim": "Paris is the capital of France.",
+    "label": "true",
+    "category": "geography"
+  },
+  {
+    "claim": "The Great Wall of China was built in the 21st century.",
+    "label": "false",
+    "category": "history"
+  },
+  {
+    "claim": "Python is a programming language.",
+    "label": "true",
+    "category": "technology"
+  }
+]

@@ -1,0 +1,2 @@
+{"instruction": "Extract verifiable factual claims from the input text.", "input": "NASA launched the Perseverance rover to Mars in July 2020.", "output": "[\"NASA launched the Perseverance rover to Mars in July 2020.\"]"}
+{"instruction": "Extract verifiable factual claims from the input text.", "input": "Many experts believe AI will transform healthcare, though timelines vary.", "output": "[]"}
