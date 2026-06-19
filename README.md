@@ -111,7 +111,9 @@ cp .env.example .env   # set VLLM_BASE_URL
 
 **UI:** `streamlit run app.py`
 
-**Docker:** `docker compose up --build` (vLLM remains external; see [serve/vllm_config.md](serve/vllm_config.md))
+**Docker:** `docker compose up --build` — see [docs/DEPLOY.md](docs/DEPLOY.md)
+
+**Cloud:** Render (API) + Streamlit Cloud (UI) — see [render.yaml](render.yaml)
 
 ---
 
@@ -122,6 +124,8 @@ cp .env.example .env   # set VLLM_BASE_URL
 | `VLLM_BASE_URL` | OpenAI-compatible vLLM endpoint |
 | `VLLM_MODEL_ID` | Model served by vLLM |
 | `REQUIRE_CITATIONS` | Downgrade verdicts without evidence URLs |
+| `API_KEY` | Require `X-API-Key` header on fact-check endpoints |
+| `API_BASE_URL` | Streamlit → API URL (for split deployments) |
 | `ENABLE_TELEMETRY` | Langfuse tracing |
 
 ---

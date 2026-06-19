@@ -6,11 +6,12 @@ import logging
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from pydantic import BaseModel, Field, model_validator
 
 from agents.manager_agent import run_fact_check
 from agents.social_manager_agent import run_social_fact_check
+from serve.auth import require_api_key
 from serve.safety import check_fact_check_request
 from serve.schemas import Citation, FactCheckResponse, HealthResponse, RootResponse
 from telemetry.langfuse_setup import init_langfuse_telemetry, shutdown_telemetry
@@ -99,7 +100,7 @@ def create_app() -> FastAPI:
             telemetry_enabled=getattr(application.state, "telemetry_enabled", False),
         )
 
-    @application.post("/fact-check", response_model=FactCheckResponse)
+    @application.post("/fact-check", response_model=FactCheckResponse, dependencies=[Depends(require_api_key)])
     async def fact_check(body: FactCheckRequest) -> FactCheckResponse:
         safety = check_fact_check_request(body.claim, body.url)
         if not safety.allowed:
@@ -119,7 +120,11 @@ def create_app() -> FastAPI:
             citations=_to_citation_models(result.citations),
         )
 
-    @application.post("/fact-check-social", response_model=FactCheckResponse)
+    @application.post(
+        "/fact-check-social",
+        response_model=FactCheckResponse,
+        dependencies=[Depends(require_api_key)],
+    )
     async def fact_check_social(body: FactCheckRequest) -> FactCheckResponse:
         safety = check_fact_check_request(body.claim, body.url)
         if not safety.allowed:

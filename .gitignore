@@ -22,7 +22,6 @@ venv/
 .DS_Store
 .idea/
 .vscode/
-.cursor/
 *.swp
 
 # ML / eval outputs

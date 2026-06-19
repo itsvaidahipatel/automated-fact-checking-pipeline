@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: fact-check-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn serve.api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHONPATH
+        value: .
+      - key: ENABLE_TELEMETRY
+        value: false
+      - key: REQUIRE_CITATIONS
+        value: true
+      - key: VLLM_BASE_URL
+        sync: false
+      - key: VLLM_MODEL_ID
+        value: Qwen/Qwen2.5-3B-Instruct
+      - key: API_KEY
+        sync: false

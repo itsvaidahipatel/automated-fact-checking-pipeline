@@ -3,21 +3,26 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime
 from typing import Any
 
 import requests
 import streamlit as st
 
-BASE_API_URL = "http://localhost:8080"
+BASE_API_URL = os.getenv("API_BASE_URL", "http://localhost:8080")
+API_KEY = os.getenv("API_KEY", "")
 HISTORY_KEY = "run_history"
 
 
 def call_fact_check_api(endpoint: str, payload: dict[str, str]) -> dict[str, Any]:
     """Call FastAPI and return JSON response."""
     url = f"{BASE_API_URL}{endpoint}"
+    headers = {"Content-Type": "application/json"}
+    if API_KEY:
+        headers["X-API-Key"] = API_KEY
     try:
-        response = requests.post(url, json=payload, timeout=300)
+        response = requests.post(url, json=payload, headers=headers, timeout=300)
     except requests.RequestException as exc:
         raise RuntimeError(f"Could not reach API at {url}: {exc}") from exc
 

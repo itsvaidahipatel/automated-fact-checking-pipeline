@@ -1,54 +1,1099 @@
 [
-  {"claim": "The Earth orbits the Sun.", "label": "true", "category": "science"},
-  {"claim": "Water boils at 100 degrees Celsius at sea level.", "label": "true", "category": "science"},
-  {"claim": "Water boils at 50 degrees Celsius at sea level.", "label": "false", "category": "science"},
-  {"claim": "Humans need oxygen to survive.", "label": "true", "category": "science"},
-  {"claim": "The speed of light in vacuum is approximately 299792458 meters per second.", "label": "true", "category": "science"},
-  {"claim": "DNA carries genetic information in living organisms.", "label": "true", "category": "science"},
-  {"claim": "The Moon is made of green cheese.", "label": "false", "category": "science"},
-  {"claim": "Antibiotics kill viruses.", "label": "false", "category": "health"},
-  {"claim": "Vaccines help the immune system develop protection against certain diseases.", "label": "true", "category": "health"},
-  {"claim": "Smoking cigarettes is linked to increased risk of lung cancer.", "label": "true", "category": "health"},
-  {"claim": "Drinking bleach cures COVID-19.", "label": "false", "category": "health"},
-  {"claim": "Regular hand washing reduces spread of many infectious diseases.", "label": "true", "category": "health"},
-  {"claim": "Type 1 diabetes is caused only by eating too much sugar.", "label": "false", "category": "health"},
-  {"claim": "Paris is the capital of France.", "label": "true", "category": "geography"},
-  {"claim": "Tokyo is the capital of Japan.", "label": "true", "category": "geography"},
-  {"claim": "The Eiffel Tower is located in Berlin.", "label": "false", "category": "geography"},
-  {"claim": "Australia is both a country and a continent.", "label": "true", "category": "geography"},
-  {"claim": "The Nile is generally considered the longest river in the world.", "label": "true", "category": "geography"},
-  {"claim": "Mount Everest is the tallest mountain above sea level on Earth.", "label": "true", "category": "geography"},
-  {"claim": "Brazil's capital city is Rio de Janeiro.", "label": "false", "category": "geography"},
-  {"claim": "World War II ended in 1945.", "label": "true", "category": "history"},
-  {"claim": "The United States declared independence in 1776.", "label": "true", "category": "history"},
-  {"claim": "The Great Wall of China was built entirely in the 21st century.", "label": "false", "category": "history"},
-  {"claim": "The Roman Empire existed in ancient history.", "label": "true", "category": "history"},
-  {"claim": "Neil Armstrong was the first person to walk on the Moon.", "label": "true", "category": "history"},
-  {"claim": "The Titanic sank in 1912.", "label": "true", "category": "history"},
-  {"claim": "World War I began in 1914.", "label": "true", "category": "history"},
-  {"claim": "Python is a programming language.", "label": "true", "category": "technology"},
-  {"claim": "HTTP is a protocol used on the World Wide Web.", "label": "true", "category": "technology"},
-  {"claim": "Linux is an open-source operating system kernel.", "label": "true", "category": "technology"},
-  {"claim": "Bluetooth technology uses visible light only.", "label": "false", "category": "technology"},
-  {"claim": "Email was invented before the telephone.", "label": "false", "category": "technology"},
-  {"claim": "GPUs are commonly used to accelerate machine learning workloads.", "label": "true", "category": "technology"},
-  {"claim": "The sun rises in the west.", "label": "false", "category": "science"},
-  {"claim": "Photosynthesis allows plants to convert light into chemical energy.", "label": "true", "category": "science"},
-  {"claim": "Gold is a chemical element with symbol Au.", "label": "true", "category": "science"},
-  {"claim": "Ice is less dense than liquid water.", "label": "true", "category": "science"},
-  {"claim": "The human body has four lungs.", "label": "false", "category": "health"},
-  {"claim": "Berlin is the capital of Germany.", "label": "true", "category": "geography"},
-  {"claim": "The Amazon River is located in Africa.", "label": "false", "category": "geography"},
-  {"claim": "Canada is north of the United States.", "label": "true", "category": "geography"},
-  {"claim": "The Renaissance was a cultural movement in Europe.", "label": "true", "category": "history"},
-  {"claim": "The printing press was invented by Johannes Gutenberg.", "label": "true", "category": "history"},
-  {"claim": "JavaScript runs only on servers and never in web browsers.", "label": "false", "category": "technology"},
-  {"claim": "Wi-Fi is a wireless networking technology.", "label": "true", "category": "technology"},
-  {"claim": "A byte consists of 8 bits.", "label": "true", "category": "technology"},
-  {"claim": "The Pacific Ocean is the largest ocean on Earth.", "label": "true", "category": "geography"},
-  {"claim": "Shakespeare wrote Hamlet.", "label": "true", "category": "history"},
-  {"claim": "The Great Depression occurred during the 1930s.", "label": "true", "category": "history"},
-  {"claim": "Mars is the closest planet to the Sun.", "label": "false", "category": "science"},
-  {"claim": "Chlorophyll gives many plants their green color.", "label": "true", "category": "science"},
-  {"claim": "YouTube is a video-sharing platform.", "label": "true", "category": "social_url", "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
+  {
+    "claim": "According to a 1998 Lancet paper, the MMR vaccine was definitively proven to cause autism in peer-reviewed research.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "health",
+    "tags": [
+      "adversarial",
+      "well_sourced_lie"
+    ]
+  },
+  {
+    "claim": "The 2020 U.S. presidential election was won by the candidate who received the most electoral college votes.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "The unemployment rate can rise while the number of employed people also rises if the labor force grows faster than employment.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "economics"
+  },
+  {
+    "claim": "Water boils at 100 degrees Celsius at standard atmospheric pressure.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "The speed of light in vacuum is approximately 299792458 meters per second.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "DNA carries genetic information in living organisms.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Vaccines stimulate the immune system to develop protection against specific diseases.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Antibiotics are effective against bacterial infections, not viral infections.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "The human heart has four chambers.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Photosynthesis converts light energy into chemical energy in plants.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Earth orbits the Sun.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "The Moon reflects light from the Sun rather than producing its own visible light.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Table salt is composed of sodium and chlorine ions.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Oxygen is necessary for human cellular respiration.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Sound cannot travel through a perfect vacuum.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Ice is less dense than liquid water at 0\u00b0C.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Metals conduct electricity more readily than typical insulators.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Bacteria are single-celled organisms.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "The periodic table organizes elements by atomic number.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Gravity causes unsupported objects near Earth to accelerate downward.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Chlorophyll contributes to the green color of many plants.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "The pH scale measures acidity and alkalinity.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Friction opposes relative motion between surfaces in contact.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Humans have three lungs.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "The Sun orbits Earth once per day.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Water is not a chemical compound.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Diamonds are made primarily of silicon.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Blood is blue before it is oxygenated in arteries.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Lightning never strikes the same place twice.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Bats are a type of bird.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Sharks are mammals.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "The Great Wall of China is visible from the Moon with the naked eye.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Gold has the chemical symbol Fe.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Vaccines contain microchips for government tracking.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Evolution is not supported by fossil evidence.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "The human body is 90% brain tissue by mass.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Glass is a slow-moving liquid at room temperature.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Antibiotics cure the common cold caused by rhinoviruses.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Nuclear power plants generate electricity by burning coal inside reactors.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "The human appendix has no possible function in any person.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Seasons are caused solely by changes in Earth's distance from the Sun.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "All plastics are biodegradable within one year in landfills.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Meteorites never contain organic molecules.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "science"
+  },
+  {
+    "claim": "Paris is the capital of France.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "Tokyo is the capital of Japan.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "Ottawa is the capital of Canada.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "Canberra is the capital of Australia.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "Bras\u00edlia is the capital of Brazil.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "The Nile is one of the longest rivers in the world.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "Mount Everest is the highest mountain above sea level on Earth.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "The Pacific Ocean is the largest ocean on Earth.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "Russia spans Europe and Asia.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "The Sahara is a hot desert in Africa.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "Sydney is the capital of Australia.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "New York City is the capital of the United States.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "The Amazon River is located in Europe.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "Mount Everest is located in South Africa.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "The capital of Italy is Barcelona.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "The Arctic Ocean surrounds Antarctica.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "London is the capital of Germany.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "The Danube flows primarily through South America.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "The capital of Spain is Lisbon.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "The Mississippi River flows through Asia.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "geography"
+  },
+  {
+    "claim": "World War II ended in 1945.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The United States declared independence in 1776.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The Titanic sank in 1912.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "Neil Armstrong walked on the Moon in 1969.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The printing press was developed in Europe before 1500.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The Roman Empire existed in antiquity.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The Berlin Wall fell in 1989.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The Magna Carta was signed in 1215.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The Wright brothers made powered flight advances in the early 1900s.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The Renaissance was a European cultural movement.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "World War I ended in 1925.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The American Civil War ended in 1901.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "Cleopatra lived closer in time to the Moon landing than to the building of the Great Pyramid.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The Titanic sank in 2001.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "Napoleon Bonaparte was emperor of Germany.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The Great Depression began in 1999.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The Declaration of Independence was signed in 1876.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The Cold War ended in 1940.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "The first iPhone was released in 1984.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "Ancient Rome was founded in 1776.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "history"
+  },
+  {
+    "claim": "Python is a programming language.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "HTTP is used for communication on the web.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "A byte consists of 8 bits.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "Linux is an operating system kernel.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "GPUs accelerate many machine learning workloads.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "Wi-Fi is a wireless networking technology.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "Open-source software may be freely used under certain licenses.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "Databases store structured data for applications.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "Encryption can protect data confidentiality.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "Version control systems track changes to source code.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "JavaScript can only run on servers, never in browsers.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "Bluetooth uses only visible red light for communication.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "RAM is a form of permanent storage that retains data without power.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "IPv4 addresses are unlimited in number.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "All programming languages compile directly to machine code only.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "HTTP stands for HyperText Transmission Protocol only for email.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "Quantum computers have replaced all classical servers in production.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "Python cannot be used for web development.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "Git is a relational database management system.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "CSS is a general-purpose systems programming language.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "technology"
+  },
+  {
+    "claim": "The mean of 2, 4, and 6 is 4.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "A probability must lie between 0 and 1 inclusive.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "Correlation does not imply causation.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "The median is less sensitive to extreme outliers than the mean for skewed data.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "A sample size of 5 is generally too small to estimate national unemployment precisely.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "Percentages can exceed 100% only in specific relative-change contexts, not as a share of a whole.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "Standard deviation measures spread around the mean.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "Doubling a rate from 1% to 2% is a 100% relative increase but a 1 percentage-point absolute increase.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "Random assignment in experiments helps reduce confounding.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "A p-value is not the probability that the null hypothesis is true.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "The mean of 1, 2, and 9 is 3.",
+    "label": "false",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "A correlation of -0.99 proves that one variable causes the other.",
+    "label": "false",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "Increasing sample size always decreases measurement error to zero.",
+    "label": "false",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "If event A and B are independent, P(A and B) equals P(A) + P(B).",
+    "label": "false",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "The median of 1, 1, 100 is 100.",
+    "label": "false",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "A study with p=0.06 proves the null hypothesis is true.",
+    "label": "false",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "All statistically significant results are practically important.",
+    "label": "false",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "Base rates can be ignored when evaluating diagnostic test results.",
+    "label": "false",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "A 200% decrease in price is mathematically possible for any good.",
+    "label": "false",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "Regression to the mean never occurs in repeated measurements.",
+    "label": "false",
+    "claim_type": "statistical",
+    "category": "statistics"
+  },
+  {
+    "claim": "The United Nations was founded after World War II.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Democracies hold elections to select representatives or leaders in many systems.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Freedom of the press is protected in many constitutional democracies.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Treaties between countries can create binding international obligations when ratified.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Census data are used to apportion representation in many countries.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Central banks often adjust interest rates to influence inflation.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Civil rights legislation in the U.S. addressed legal segregation in the 1960s.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "NATO is a military alliance that includes the United States and Canada.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Lobbying is a legal form of political advocacy in many democracies.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Judicial review allows courts to assess constitutionality of laws in some systems.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "The U.S. Constitution was written in 2020.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Monarchies never exist in the modern world.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "International law has no effect on any sovereign state ever.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "All countries use the same electoral system for national elections.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "The European Union is a single unified country with one president.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Impeachment automatically removes a U.S. president without any Senate process.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Only dictatorships have written constitutions.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Voting is mandatory in every country worldwide.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "The United Nations can deploy binding military forces in any country without consent.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "Political parties are banned in all democracies.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "A Harvard Medical School press release confirmed that drinking eight glasses of water per hour cures type 2 diabetes within one week.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "health",
+    "tags": [
+      "adversarial",
+      "well_sourced_lie"
+    ]
+  },
+  {
+    "claim": "Official NASA telemetry published in 2019 showed the International Space Station orbits at 50,000 km above Earth.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "space",
+    "tags": [
+      "adversarial",
+      "well_sourced_lie"
+    ]
+  },
+  {
+    "claim": "The Congressional Budget Office reported in 2015 that U.S. federal debt was zero due to a one-time accounting change.",
+    "label": "false",
+    "claim_type": "statistical",
+    "category": "economics",
+    "tags": [
+      "adversarial",
+      "well_sourced_lie"
+    ]
+  },
+  {
+    "claim": "YouTube is a video-sharing platform owned by Google.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "social_url",
+    "url": "https://www.youtube.com/"
+  },
+  {
+    "claim": "The influenza vaccine is updated in some years to match circulating strains.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "health"
+  },
+  {
+    "claim": "Handwashing with soap reduces transmission of many pathogens.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "health"
+  },
+  {
+    "claim": "Smoking increases the risk of lung cancer.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "health"
+  },
+  {
+    "claim": "Plate tectonics explains continental drift.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "geoscience"
+  },
+  {
+    "claim": "Atoms consist of protons, neutrons, and electrons.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "chemistry"
+  },
+  {
+    "claim": "The greenhouse effect involves trapping of infrared radiation by gases.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "climate"
+  },
+  {
+    "claim": "HIV attacks the immune system.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "health"
+  },
+  {
+    "claim": "CRISPR can be used to edit DNA sequences in laboratory settings.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "biology"
+  },
+  {
+    "claim": "The speed of sound in air increases with temperature at constant humidity.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "physics"
+  },
+  {
+    "claim": "Mitochondria are involved in energy production in eukaryotic cells.",
+    "label": "true",
+    "claim_type": "scientific",
+    "category": "biology"
+  },
+  {
+    "claim": "The Bill of Rights comprises the first ten amendments to the U.S. Constitution.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "law"
+  },
+  {
+    "claim": "The Supreme Court can strike down laws inconsistent with the Constitution.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "law"
+  },
+  {
+    "claim": "Gerrymandering refers to drawing electoral districts for political advantage.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "A filibuster in the U.S. Senate can delay votes on legislation.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "civics"
+  },
+  {
+    "claim": "The median voter theorem is used in political science models.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "theory"
+  },
+  {
+    "claim": "Turnout rates vary across elections and jurisdictions.",
+    "label": "true",
+    "claim_type": "political",
+    "category": "elections"
+  },
+  {
+    "claim": "Inflation measures the rate of increase in a price index over time.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "economics"
+  },
+  {
+    "claim": "GDP measures the market value of final goods and services produced.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "economics"
+  },
+  {
+    "claim": "Confidence intervals quantify uncertainty around an estimate.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "methods"
+  },
+  {
+    "claim": "Selection bias can occur when samples are not representative.",
+    "label": "true",
+    "claim_type": "statistical",
+    "category": "methods"
+  },
+  {
+    "claim": "The flu vaccine guarantees you will never get any respiratory illness.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "health"
+  },
+  {
+    "claim": "Washing hands has no effect on infection rates.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "health"
+  },
+  {
+    "claim": "Smoking improves lung capacity.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "health"
+  },
+  {
+    "claim": "Continents never move relative to each other.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "geoscience"
+  },
+  {
+    "claim": "Atoms contain only neutrons.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "chemistry"
+  },
+  {
+    "claim": "Carbon dioxide has no heat-trapping properties.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "climate"
+  },
+  {
+    "claim": "HIV is cured by drinking lemon water daily.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "health"
+  },
+  {
+    "claim": "All gene editing is impossible in any organism.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "biology"
+  },
+  {
+    "claim": "Sound travels faster in vacuum than in air.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "physics"
+  },
+  {
+    "claim": "Mitochondria are found only in plants, never in animals.",
+    "label": "false",
+    "claim_type": "scientific",
+    "category": "biology"
+  },
+  {
+    "claim": "The U.S. has no written constitution.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "law"
+  },
+  {
+    "claim": "Courts never review legislation for constitutionality.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "law"
+  },
+  {
+    "claim": "Electoral districts are always perfect squares by law.",
+    "label": "false",
+    "claim_type": "political",
+    "category": "civics"
+  }
 ]
