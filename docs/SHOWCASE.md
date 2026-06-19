@@ -42,7 +42,7 @@ Save as `API_KEY` — use the **same value** on Railway and Streamlit.
 
 1. Go to [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub**
 2. Select `automated-fact-checking-pipeline`
-3. Railway uses [`railway.toml`](../railway.toml) + [`Dockerfile`](../Dockerfile)
+3. Railway uses [`railway.toml`](../railway.toml) + [`Dockerfile`](../Dockerfile) (start script: `scripts/start_api.sh` reads `$PORT`)
 4. **Variables** (Railway → service → Variables):
 
 | Variable | Value |

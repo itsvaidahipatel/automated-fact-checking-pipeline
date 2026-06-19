@@ -14,8 +14,9 @@ COPY agents/ agents/
 COPY tools/ tools/
 COPY telemetry/ telemetry/
 COPY serve/ serve/
+COPY scripts/start_api.sh scripts/start_api.sh
+RUN chmod +x scripts/start_api.sh
 
 EXPOSE 8080
 
-# Railway sets $PORT; local default 8080
-CMD uvicorn serve.api:app --host 0.0.0.0 --port ${PORT:-8080}
+CMD ["scripts/start_api.sh"]
