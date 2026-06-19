@@ -1,5 +1,5 @@
 #!/bin/sh
-# Removes automated co-author trailers before a commit is finalized.
+# Strips unwanted automated lines from commit messages before finalize.
 # Install: ./scripts/setup-git-hooks.sh
 
 MSG_FILE="$1"
