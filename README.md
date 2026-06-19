@@ -2,25 +2,24 @@
 
 [![CI](https://github.com/itsvaidahipatel/automated-fact-checking-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/itsvaidahipatel/automated-fact-checking-pipeline/actions/workflows/ci.yml)
 
-**Vaidahi Patel** · [GitHub](https://github.com/itsvaidahipatel)
+**Vaidahi Patel** · [GitHub](https://github.com/itsvaidahipatel) · [Repository](https://github.com/itsvaidahipatel/automated-fact-checking-pipeline)
 
-A multi-agent system that verifies claims and social-media URLs against web evidence. It returns a structured verdict, confidence score, and source citations. Orchestration runs on a standard host; inference is served through vLLM (OpenAI-compatible API).
+## Problem
 
-| | |
-|---|---|
-| **Architecture** | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
-| **Evaluation** | [docs/EVAL.md](docs/EVAL.md) |
-| **Summary** | [docs/PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md) |
+Misinformation spreads faster than manual fact-checking can scale. This system automates verification: it takes a **claim or URL**, runs a **multi-agent pipeline** (extract → decompose → research), and returns a **structured verdict**, **confidence score**, and **source citations** — with GPU inference separated from orchestration via **vLLM**.
 
 ---
 
-## Highlights
+## Live demo
 
-- Hierarchical agents (extract → claim → research) via [smolagents](https://huggingface.co/docs/smolagents)
-- Decoupled GPU inference (vLLM) from FastAPI orchestration
-- Citation grounding and request safety checks on the API layer
-- 52-claim labeled evaluation harness with optional Ragas metrics
-- Docker Compose, GitHub Actions CI, and pytest
+| | |
+|---|---|
+| **Repository** | https://github.com/itsvaidahipatel/automated-fact-checking-pipeline |
+| **Live UI** | _Add Streamlit Cloud URL after deploy_ |
+| **Live API** | _Add Railway URL `/docs` after deploy_ |
+| **Demo video** | _Add YouTube/Loom link after recording_ |
+
+Full deploy walkthrough: **[docs/SHOWCASE.md](docs/SHOWCASE.md)**
 
 ---
 
@@ -28,41 +27,31 @@ A multi-agent system that verifies claims and social-media URLs against web evid
 
 | Metric | Value |
 |--------|-------|
-| Eval dataset | 52 labeled claims ([fixture](evals/fixtures/labeled_claims.json)) |
-| End-to-end accuracy | See [latest report](evals/results/pipeline_eval_latest.json) |
+| Eval dataset | 180 labeled claims ([fixture](evals/fixtures/labeled_claims.json)) |
+| End-to-end accuracy | _Run eval on GPU — see [docs/SHOWCASE.md](docs/SHOWCASE.md)_ |
+| Latest report | [evals/results/pipeline_eval_latest.json](evals/results/pipeline_eval_latest.json) |
 | Methodology | [docs/EVAL.md](docs/EVAL.md) |
 
+After GPU eval:
+
 ```bash
-export PYTHONPATH=.
-set -a && source .env && set +a
-python evals/run_pipeline_eval.py --ragas-subset 15 \
-  --output evals/results/pipeline_eval_latest.json
+EVAL_LIMIT=20 ./scripts/run_eval_and_update_readme.sh
 ```
-
-Requires a running vLLM instance (`VLLM_BASE_URL` in `.env`).
-
----
-
-## Demo
-
-| | |
-|---|---|
-| **UI** | `streamlit run app.py` (API on port 8080) |
-| **API** | `http://localhost:8080/docs` |
-| **Walkthrough** | _Video link — add when available_ |
 
 ---
 
 ## Architecture
 
+Orchestration (FastAPI + smolagents) runs on Railway; inference (vLLM) runs on a GPU host (AWS burst). Streamlit Cloud provides the UI.
+
 ```mermaid
 flowchart TB
     subgraph Client["Client"]
-        UI[Streamlit]
-        API_Client[HTTP clients]
+        UI[Streamlit Cloud]
+        Curl[HTTP clients]
     end
 
-    subgraph Orchestration["Orchestration"]
+    subgraph Orchestration["Railway"]
         API[FastAPI]
         Mgr[Manager Agent]
         Sub[Extractor / Claim / Research]
@@ -73,47 +62,56 @@ flowchart TB
         Search[DuckDuckGo]
     end
 
-    subgraph Inference["Inference"]
-        VLLM[(vLLM)]
+    subgraph Inference["AWS GPU"]
+        VLLM[(vLLM Qwen2.5-3B)]
     end
 
     UI --> API
-    API_Client --> API
+    Curl --> API
     API --> Mgr --> Sub
     Sub --> Tools
     Sub --> VLLM
 ```
-
-Full design notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 | Endpoint | Description |
 |----------|-------------|
 | `POST /fact-check` | Claims and optional article URLs |
 | `POST /fact-check-social` | Social URLs with prioritized domains |
 
-Responses include `verdict`, `confidence`, `summary`, and `citations`. Policy violations return `status: refused`.
+Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 ---
 
-## Quick start
+## Highlights
+
+- Hierarchical agents (smolagents): extract → claim → research
+- vLLM inference decoupled from FastAPI orchestration
+- Citation grounding + API key auth + safety refusals
+- 180-claim eval harness (political / scientific / statistical)
+- Railway + Streamlit Cloud deploy; Docker + GitHub Actions CI
+
+---
+
+## Quick start (local)
 
 ```bash
 git clone https://github.com/itsvaidahipatel/automated-fact-checking-pipeline.git
 cd automated-fact-checking-pipeline
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env   # set VLLM_BASE_URL
+cp .env.example .env
 ```
 
-**vLLM (GPU host):** `vllm serve Qwen/Qwen2.5-3B-Instruct --host 0.0.0.0 --port 8000`
+```bash
+# Terminal 1 — GPU host
+vllm serve Qwen/Qwen2.5-3B-Instruct --host 0.0.0.0 --port 8000
 
-**API:** `export PYTHONPATH=. && uvicorn serve.api:app --reload --port 8080`
+# Terminal 2 — API
+export PYTHONPATH=. && uvicorn serve.api:app --reload --port 8080
 
-**UI:** `streamlit run app.py`
-
-**Docker:** `docker compose up --build` — see [docs/DEPLOY.md](docs/DEPLOY.md)
-
-**Cloud:** Render (API) + Streamlit Cloud (UI) — see [render.yaml](render.yaml)
+# Terminal 3 — UI
+streamlit run app.py
+```
 
 ---
 
@@ -122,11 +120,9 @@ cp .env.example .env   # set VLLM_BASE_URL
 | Variable | Description |
 |----------|-------------|
 | `VLLM_BASE_URL` | OpenAI-compatible vLLM endpoint |
-| `VLLM_MODEL_ID` | Model served by vLLM |
-| `REQUIRE_CITATIONS` | Downgrade verdicts without evidence URLs |
-| `API_KEY` | Require `X-API-Key` header on fact-check endpoints |
-| `API_BASE_URL` | Streamlit → API URL (for split deployments) |
-| `ENABLE_TELEMETRY` | Langfuse tracing |
+| `API_KEY` | Required on Railway; sent as `X-API-Key` |
+| `API_BASE_URL` | Streamlit → Railway API URL |
+| `REQUIRE_CITATIONS` | Downgrade verdicts without evidence |
 
 ---
 
@@ -134,7 +130,6 @@ cp .env.example .env   # set VLLM_BASE_URL
 
 ```bash
 pip install -r requirements-dev.txt
-ruff check agents tools serve tests
 pytest -q
 ```
 

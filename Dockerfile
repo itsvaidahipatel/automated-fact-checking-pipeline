@@ -17,4 +17,5 @@ COPY serve/ serve/
 
 EXPOSE 8080
 
-CMD ["uvicorn", "serve.api:app", "--host", "0.0.0.0", "--port", "8080"]
+# Railway sets $PORT; local default 8080
+CMD uvicorn serve.api:app --host 0.0.0.0 --port ${PORT:-8080}

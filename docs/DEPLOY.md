@@ -1,5 +1,7 @@
 # Deployment
 
+**Portfolio walkthrough (Railway + Streamlit + AWS burst):** [docs/SHOWCASE.md](SHOWCASE.md)
+
 This project has two deployable tiers:
 
 | Tier | Service | Host options |
@@ -49,7 +51,17 @@ curl -X POST http://VPS:8080/fact-check \
 
 ---
 
-## Option B — Render (free/cheap API)
+## Option B — Railway (API) + Streamlit Cloud (UI)
+
+See **[docs/SHOWCASE.md](SHOWCASE.md)** for the full step-by-step portfolio setup.
+
+Quick reference:
+- API: [`railway.toml`](../railway.toml) + [`Dockerfile`](../Dockerfile)
+- UI: Streamlit Cloud + [`.streamlit/secrets.toml.example`](../.streamlit/secrets.toml.example)
+
+---
+
+## Option C — Render (API)
 
 1. Push repo to GitHub.
 2. [Render](https://render.com) → **New Web Service** → connect repo.
@@ -67,7 +79,7 @@ Streamlit: deploy separately on [Streamlit Community Cloud](https://streamlit.io
 
 ---
 
-## Option C — Streamlit Community Cloud (UI only)
+## Option D — Streamlit Community Cloud (UI only)
 
 1. Connect GitHub repo at share.streamlit.io.
 2. Main file: `app.py`

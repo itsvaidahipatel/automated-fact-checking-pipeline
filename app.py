@@ -15,12 +15,41 @@ API_KEY = os.getenv("API_KEY", "")
 HISTORY_KEY = "run_history"
 
 
-def call_fact_check_api(endpoint: str, payload: dict[str, str]) -> dict[str, Any]:
+def get_api_settings() -> tuple[str, str]:
+    """Read API URL/key from env or Streamlit Cloud secrets."""
+    base = os.getenv("API_BASE_URL", "http://localhost:8080")
+    key = os.getenv("API_KEY", "")
+    try:
+        if "API_BASE_URL" in st.secrets:
+            base = str(st.secrets["API_BASE_URL"]).rstrip("/")
+        if "API_KEY" in st.secrets:
+            key = str(st.secrets["API_KEY"])
+    except Exception:
+        pass
+    return base, key
+
+
+def check_api_health(base_url: str) -> dict[str, Any]:
+    """Ping API /health for sidebar status."""
+    try:
+        r = requests.get(f"{base_url.rstrip('/')}/health", timeout=10)
+        return r.json() if r.ok else {"status": "error", "code": r.status_code}
+    except requests.RequestException as exc:
+        return {"status": "unreachable", "message": str(exc)}
+
+
+def call_fact_check_api(
+    endpoint: str,
+    payload: dict[str, str],
+    *,
+    base_url: str,
+    api_key: str,
+) -> dict[str, Any]:
     """Call FastAPI and return JSON response."""
-    url = f"{BASE_API_URL}{endpoint}"
+    url = f"{base_url.rstrip('/')}{endpoint}"
     headers = {"Content-Type": "application/json"}
-    if API_KEY:
-        headers["X-API-Key"] = API_KEY
+    if api_key:
+        headers["X-API-Key"] = api_key
     try:
         response = requests.post(url, json=payload, headers=headers, timeout=300)
     except requests.RequestException as exc:
@@ -308,9 +337,18 @@ def main() -> None:
 
     _init_history()
 
+    api_base, api_key = get_api_settings()
+
     with st.sidebar:
         st.markdown("**Vaidahi Patel**")
-        st.markdown("[GitHub](https://github.com/itsvaidahipatel)")
+        st.markdown("[GitHub](https://github.com/itsvaidahipatel/automated-fact-checking-pipeline)")
+        st.markdown("---")
+        health = check_api_health(api_base)
+        if health.get("status") == "ok":
+            st.success("API connected")
+        else:
+            st.warning(f"API: {health.get('status', 'unknown')}")
+        st.caption(f"Backend: `{api_base}`")
         st.markdown("---")
         st.header("Verification Mode")
         mode = st.radio("Choose pipeline", ["Standard Claims", "Social Media"], index=0)
@@ -364,7 +402,12 @@ def main() -> None:
 
     with st.spinner("Running agentic fact-checking pipeline..."):
         try:
-            data = call_fact_check_api(endpoint, payload)
+            data = call_fact_check_api(
+                endpoint,
+                payload,
+                base_url=api_base,
+                api_key=api_key,
+            )
         except Exception as exc:
             st.error(f"Request failed: {exc}")
             _append_history(

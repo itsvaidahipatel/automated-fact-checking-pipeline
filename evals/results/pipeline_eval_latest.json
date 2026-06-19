@@ -4,8 +4,8 @@
     "model_id": "Qwen/Qwen2.5-3B-Instruct",
     "vllm_base_url": "configured via VLLM_BASE_URL",
     "fixture": "evals/fixtures/labeled_claims.json",
-    "total_samples": 52,
-    "note": "Run python evals/run_pipeline_eval.py on a vLLM host to populate metrics."
+    "total_samples": 180,
+    "note": "Run EVAL_LIMIT=20 ./scripts/run_eval_and_update_readme.sh while vLLM is up."
   },
   "metrics": null,
   "ragas": null,
